@@ -1,0 +1,19 @@
+post_install() {
+  post_upgrade
+
+  chown -R logstash:logstash var/lib/logstash
+}
+
+post_upgrade() {
+  getent group sensu &>/dev/null || \
+    groupadd sensu &>/dev/null
+
+  getent passwd sensu &>/dev/null || \
+    useradd -g sensu -d /opt/sensu -s /bin/false sensu \
+    -c 'Sensu Monitoring Framework' &>/dev/null
+}
+
+post_remove() {
+  getent passwd sensu &>/dev/null && userdel sensu
+  getent group sensu &>/dev/null && groupdel sensu
+}
