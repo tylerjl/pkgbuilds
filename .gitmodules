@@ -1,0 +1,3 @@
+[submodule "ganglia"]
+	path = ganglia
+	url = aur:ganglia.git
