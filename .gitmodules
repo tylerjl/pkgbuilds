@@ -13,3 +13,6 @@
 [submodule "packetbeat"]
 	path = packetbeat
 	url = aur:packetbeat.git
+[submodule "pidgin-extprefs"]
+	path = pidgin-extprefs
+	url = aur:pidgin-extprefs.git
