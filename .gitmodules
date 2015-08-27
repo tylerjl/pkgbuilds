@@ -1,3 +1,6 @@
+[submodule "riemann"]
+	path = riemann
+	url = aur:riemann.git
 [submodule "ganglia-web"]
 	path = ganglia-web
 	url = aur:ganglia-web.git
