@@ -1,6 +1,9 @@
 [submodule "ganglia"]
 	path = ganglia
 	url = aur:ganglia.git
+[submodule "ganglia-minimal"]
+	path = ganglia-minimal
+	url = aur:ganglia-minimal.git
 [submodule "packetbeat"]
 	path = packetbeat
 	url = aur:packetbeat.git
