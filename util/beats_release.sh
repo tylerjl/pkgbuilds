@@ -71,18 +71,18 @@ fi
 
 if [[ " ${targets[*]} " == *" source "* ]] ; then
     # Update from-source tarballs
+    artifact="v$ver.tar.gz"
+    tag="$gh_base/beats/archive/$artifact"
+    pushd /tmp/
+    curl -L -s $tag -O
+    checksum="$(gsha256sum $artifact | awk '{ print $1; }')"
+    popd
     for src_release in *beat ; do
-        artifact="v$ver.tar.gz"
-        tag="$gh_base/$src_release/archive/$artifact"
-        pushd /tmp/
-        curl -L -s $tag -O
-        checksum="$(gsha256sum $artifact | awk '{ print $1; }')"
-        popd
         new_pkgbuild="$(sed -E \
             -e "s/(pkgver=).*/\1$ver/" \
             -e "s/(sha256sums=).*/\1('$checksum'/" \
             $src_release/PKGBUILD)"
-        echo "==> DIFF:"
+        echo "==> $src_release DIFF:"
         diff $src_release/PKGBUILD <(echo "$new_pkgbuild")
         echo -n "Write new PKGBUILD? (y/N): "
         read want_creds
@@ -90,10 +90,10 @@ if [[ " ${targets[*]} " == *" source "* ]] ; then
         if [ $want_creds == 'y' ] ; then
             echo "$new_pkgbuild" > $src_release/PKGBUILD
         fi
-        pushd /tmp/
-        rm $artifact
-        popd
     done
+    pushd /tmp/
+    rm $artifact
+    popd
 fi
 
 popd
