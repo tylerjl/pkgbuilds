@@ -43,6 +43,7 @@ if [[ " ${targets[*]} " == *" binary "* ]] ; then
             checksum_64="$(gsha256sum $artifact_64 | awk '{ print $1; }')"
             popd
             new_pkgbuild="$(sed -E \
+                -e "s/(pkgver=).*/\1$ver/" \
                 -e "s/(sha256sums_i686=).*/\1('$checksum_32')/" \
                 -e "s/(sha256sums_x86_64=).*/\1('$checksum_64')/" \
                 $bin_release/PKGBUILD)"
