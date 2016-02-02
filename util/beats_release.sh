@@ -44,6 +44,7 @@ if [[ " ${targets[*]} " == *" binary "* ]] ; then
             popd
             new_pkgbuild="$(sed -E \
                 -e "s/(pkgver=).*/\1$ver/" \
+                -e "s/^pkgrel=.*/pkgrel=1/" \
                 -e "s/(sha256sums_i686=).*/\1('$checksum_32')/" \
                 -e "s/(sha256sums_x86_64=).*/\1('$checksum_64')/" \
                 $bin_release/PKGBUILD)"
