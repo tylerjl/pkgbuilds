@@ -81,6 +81,7 @@ if [[ " ${targets[*]} " == *" source "* ]] ; then
         new_pkgbuild="$(sed -E \
             -e "s/(pkgver=).*/\1$ver/" \
             -e "s/(sha256sums=).*/\1('$checksum'/" \
+            -e "s/^pkgrel=.*/pkgrel=1/" \
             $src_release/PKGBUILD)"
         echo "==> $src_release DIFF:"
         diff $src_release/PKGBUILD <(echo "$new_pkgbuild")
