@@ -1,44 +1,64 @@
+# Maintainer: Tyler Langlois <ty |at| tjll |dot| net>
+
 pkgname=sensu
-pkgver=0.18
+pkgver=0.22.2
 pkgrel=1
 pkgdesc='A monitoring framework that aims to be simple, malleable, and scalable.'
 arch=('any')
-url='http://sensuapp.org/'
+url="https://${pkgname}app.org/"
 license=('MIT')
-# depends=('java-runtime')
-# makedepends=('ruby')
-install=sensu.install
+depends=('ruby' 'ruby-bundler')
+optdepends=('rabbitmq: required to run sensu-server'
+            'redis: required to run sensu-server')
+options=('!strip')
+install="${pkgname}.install"
 
-source=("https://download.elasticsearch.org/$pkgname/$pkgname/$pkgname-$pkgver.tar.gz"
-        "logstash.service"
-        "logstash@.service"
-        "logstash-web.service")
-sha256sums=('d5be171af8d4ca966a0c731fc34f5deeee9d7631319e3660d1df99e43c5f8069'
-            '984a972a67e8e16d0c8d81aeb312bf49258052eb8bc5cea340709756190619a8'
-            'edc0ff1b4c2ba10c7907c4ed7e93cd035cc9c352b6c00cc514dc14cd3fa686cf'
-            '327df7c1a9c5d4c0c21ed2996f6db0831c9956816568e252d952e70355128770')
+source=("https://github.com/${pkgname}/${pkgname}/archive/v${pkgver}.tar.gz"
+        "https://github.com/${pkgname}/${pkgname}-build/archive/${pkgver}-1.tar.gz"
+        "${pkgname}.sysusers")
+sha256sums=('SKIP'
+            'SKIP'
+            'SKIP')
+
+prepare() {
+  cd "$srcdir/$pkgname-build-$pkgver-1"
+
+  # Let journald handle logging - sensu defaults logging to STDOUT.
+  for service in sensu-{api,client,server} ; do
+    sed -i "s| -l /var/log/sensu/${service}.log||" \
+           sensu_configs/systemd/${service}.service
+  done
+}
+
+build() {
+  cd "$srcdir/$pkgname-$pkgver"
+
+  bundle install --without development --binstubs --path vendor
+}
 
 package() {
   cd "$srcdir"
 
-  install -dm755 "$pkgdir"/opt
-  cp -a logstash-$pkgver "$pkgdir"/opt/logstash
+  install -dm755 "$pkgdir"/etc/sensu/{plugins,mutators,handlers,extensions} \
+                 "$pkgdir"/opt \
+                 "$pkgdir"/usr/bin
 
-  install -Dm644 logstash.service "$pkgdir"/usr/lib/systemd/system/logstash.service
-  install -Dm644 logstash@.service "$pkgdir"/usr/lib/systemd/system/logstash@.service
-  install -Dm644 logstash-web.service "$pkgdir"/usr/lib/systemd/system/logstash-web.service
+  cp -a --no-preserve=ownership,timestamp \
+        $pkgname-$pkgver "$pkgdir"/opt/$pkgname
+  cp -a --no-preserve=ownership,timestamp \
+        $pkgname-build-$pkgver-1/sensu_configs/sensu/* \
+        "$pkgdir"/etc/$pkgname/
 
-  install -dm755 "$pkgdir"/var/lib/logstash
-  install -dm755 "$pkgdir"/etc/logstash/conf.d
+  for service in sensu-{api,client,server} ; do
+    install -Dm644 $pkgname-build-$pkgver-1/sensu_configs/systemd/${service}.service \
+                   "$pkgdir"/usr/lib/systemd/system/${service}.service
+  done
 
-  install -dm755 "$pkgdir"/usr/bin
-  ln -s /opt/logstash/bin/logstash "$pkgdir"/usr/bin/logstash
+  # Provide globally-executable install executable for plugins.
+  ln -s ../../opt/$pkgname/bin/$pkgname-install \
+        "$pkgdir"/usr/bin/$pkgname-install
 
-  cd "$pkgdir"/opt/logstash/bin
-  rm logstash.bat
-  sed -r 's#^basedir=.*#basedir=/opt/logstash#' -i *
-
-  sed -e '1i [ -f /etc/profile.d/jre.sh ] && . /etc/profile.d/jre.sh' \
-      -e '2i [ -f /etc/profile.d/jdk.sh ] && . /etc/profile.d/jdk.sh' \
-      -i logstash.lib.sh
+  # See man page for sysusers.d(5)
+  install -D -m644 "$pkgname.sysusers" \
+                   "$pkgdir/usr/lib/sysusers.d/$pkgname.conf"
 }

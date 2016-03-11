@@ -1,19 +1,17 @@
+# Arg 1: the new package version
 post_install() {
-  post_upgrade
 
-  chown -R logstash:logstash var/lib/logstash
+  # Create user and group
+  systemd-sysusers sensu.conf
+
+  # Required at this stage to ensure user & group are available
+  chown -R sensu:sensu /opt/sensu
 }
 
-post_upgrade() {
-  getent group sensu &>/dev/null || \
-    groupadd sensu &>/dev/null
-
-  getent passwd sensu &>/dev/null || \
-    useradd -g sensu -d /opt/sensu -s /bin/false sensu \
-    -c 'Sensu Monitoring Framework' &>/dev/null
-}
-
+# Arg 1: the old package version
 post_remove() {
-  getent passwd sensu &>/dev/null && userdel sensu
-  getent group sensu &>/dev/null && groupdel sensu
+  echo "This package does not automatically remove the sensu user and group."
+  echo "Please do so manually if they are no longer required."
 }
+
+# vim:set ts=2 sw=2 et:
