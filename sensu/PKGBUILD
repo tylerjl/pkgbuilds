@@ -8,8 +8,8 @@ arch=('any')
 url="https://${pkgname}app.org/"
 license=('MIT')
 depends=('ruby' 'ruby-bundler')
-optdepends=('rabbitmq: required to run sensu-server'
-            'redis: required to run sensu-server')
+optdepends=('rabbitmq: transport agent for sensu-server'
+            'redis: required for sensu-server and sensu-api')
 options=('!strip')
 install="${pkgname}.install"
 
