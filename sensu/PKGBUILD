@@ -16,8 +16,8 @@ install="${pkgname}.install"
 source=("https://github.com/${pkgname}/${pkgname}/archive/v${pkgver}.tar.gz"
         "https://github.com/${pkgname}/${pkgname}-build/archive/${pkgver}-1.tar.gz"
         "${pkgname}.sysusers")
-sha256sums=('SKIP'
-            'SKIP'
+sha256sums=('2439ba25b22f16f7b90224cfee75af312ed492574bcc82df630c05c7cac2b1be'
+            '74eac07f10452111ae8d72504c9a3ae5871c3de18314ab7c0f54060f993aa594'
             'SKIP')
 
 prepare() {
