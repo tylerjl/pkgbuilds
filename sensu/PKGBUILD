@@ -39,6 +39,8 @@ prepare() {
 build() {
   cd "$srcdir/$pkgname-$pkgver"
 
+  # --binstubs will create system-runnable executables with correct
+  # bundler context
   bundle install --without development --binstubs --path vendor
 }
 
