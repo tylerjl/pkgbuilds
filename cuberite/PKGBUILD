@@ -1,0 +1,91 @@
+# Maintainer: Tyler Langlois <ty |at| tjll |dot| net>
+pkgname=cuberite-git
+_pkgbase=${pkgname%%-git}
+pkgver=r9464.f045c96
+pkgrel=1
+pkgdesc="A custom Minecraft compatible game server written in C++"
+arch=('i686' 'x86_64' 'armv7h' 'armv6h')
+url=" http://$_pkgbase.org"
+license=('APACHE')
+depends=()
+makedepends=('cmake' 'git' 'make')
+provides=($_pkgbase)
+conflicts=($_pkgbase)
+backup=()
+options=()
+# install=
+source=('git://github.com/cuberite/cuberite.git#branch=testing'
+        'git://github.com/mc-server/Core.git'
+        'git://github.com/mc-server/ProtectionAreas.git'
+        'git://github.com/bearbin/transapi.git'
+        'git://github.com/mc-server/ChunkWorx.git'
+        'git://github.com/mc-server/ChatLog.git'
+        'git://github.com/mc-server/Handy.git'
+        'git://github.com/mc-server/MagicCarpet.git'
+        'git://github.com/mc-server/polarssl.git'
+        'git://github.com/mc-server/SQLiteCpp.git'
+        'git://github.com/mc-server/libevent.git'
+        'git://github.com/open-source-parsers/jsoncpp.git'
+        'git://github.com/mc-server/TCLAP.git'
+        'git://github.com/cuberite/cmake-coverage.git'
+        'git://github.com/cuberite/expat.git'
+        'git://github.com/cuberite/lua.git'
+        'git://github.com/cuberite/luaexpat.git'
+        'git://github.com/cuberite/luaproxy.git'
+        'git://github.com/cuberite/sqlite.git'
+        'git://github.com/cuberite/toluapp.git'
+        'git://github.com/cuberite/zlib.git')
+# noextract=()
+sha256sums=('SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP')
+
+pkgver() {
+  cd "$_pkgbase"
+  printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+prepare() {
+  cd "$_pkgbase"
+
+  git submodule init
+  for module in $(awk -F'[ "]+' '$0 ~ /submodule/ { print $2; }' .gitmodules) ; do
+    git config submodule.$module.url $srcdir/$(basename $module | sed 's/+/p/g')
+  done
+  git submodule update
+
+  install -d Release
+}
+
+build() {
+  cd "$srcdir/$_pkgbase"
+
+  cd Release
+  cmake -DCMAKE_BUILD_TYPE=RELEASE ..
+  make -j
+}
+
+package() {
+  cd "$srcdir"
+  make DESTDIR="$pkgdir/" install
+}
+
+# vim:set ts=2 sw=2 et:
