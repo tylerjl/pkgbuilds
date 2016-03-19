@@ -28,6 +28,12 @@ prepare() {
     sed -i "s| -l /var/log/sensu/${service}.log||" \
            sensu_configs/systemd/${service}.service
   done
+
+  # Alter sensu-install slightly to point at correct /opt paths
+  sed -i "s|/opt/sensu/embedded/|/opt/sensu/|" \
+         sensu_configs/bin/sensu-install
+  sed -E -i "s|(GEM_PATH=/opt/sensu)/lib(/ruby)/gems/2.2.0|\1/vendor\2/2.3.0|" \
+            sensu_configs/bin/sensu-install
 }
 
 build() {
