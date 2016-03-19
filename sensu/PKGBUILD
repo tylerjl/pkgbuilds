@@ -63,8 +63,8 @@ package() {
   done
 
   # Provide globally-executable install executable for plugins.
-  ln -s ../../opt/$pkgname/bin/$pkgname-install \
-        "$pkgdir"/usr/bin/$pkgname-install
+  install -D -m755 $pkgname-build-$pkgver-1/${pkgname}_configs/bin/$pkgname-install \
+                   "$pkgdir"/usr/bin/$pkgname-install
 
   # See man page for sysusers.d(5)
   install -D -m644 "$pkgname.sysusers" \
