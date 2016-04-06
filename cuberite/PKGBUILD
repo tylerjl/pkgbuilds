@@ -1,4 +1,5 @@
 # Maintainer: Tyler Langlois <ty |at| tjll |dot| net>
+
 pkgname=cuberite-git
 _pkgbase=${pkgname%%-git}
 pkgver=r9464.f045c96
@@ -7,12 +8,9 @@ pkgdesc="A custom Minecraft compatible game server written in C++"
 arch=('i686' 'x86_64' 'armv7h' 'armv6h')
 url=" http://$_pkgbase.org"
 license=('APACHE')
-depends=()
 makedepends=('cmake' 'git' 'make')
 provides=($_pkgbase)
 conflicts=($_pkgbase)
-backup=()
-options=()
 # install=
 source=('git://github.com/cuberite/cuberite.git#branch=testing'
         'git://github.com/mc-server/Core.git'
@@ -35,7 +33,6 @@ source=('git://github.com/cuberite/cuberite.git#branch=testing'
         'git://github.com/cuberite/sqlite.git'
         'git://github.com/cuberite/toluapp.git'
         'git://github.com/cuberite/zlib.git')
-# noextract=()
 sha256sums=('SKIP'
             'SKIP'
             'SKIP'
