@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-dl_base=https://download.elastic.co/beats
+dl_base=https://artifacts.elastic.co/downloads/beats
 gh_base=https://github.com/elastic
 ret=0
 
@@ -26,12 +26,16 @@ pushd `dirname $0`/.. &>/dev/null
 if [[ " ${targets[*]} " == *" binary "* ]] ; then
     # Update precompiled binary releases
     for bin_release in *beat-bin ; do
+        [[ $bin_release =~ topbeat ]] && continue
         beat=${bin_release%%-bin}
-        artifact_32="$beat-$ver-i686.tar.gz"
-        artifact_64="$beat-$ver-x86_64.tar.gz"
+        artifact_32="$beat-$ver-linux-x86.tar.gz"
+        artifact_64="$beat-$ver-linux-x86_64.tar.gz"
         checksums="$(mktemp /tmp/$(basename $0)-$beat.XXXXXX)"
-        curl -s $dl_base/$beat/$artifact_32.sha1.txt >> $checksums
-        curl -s $dl_base/$beat/$artifact_64.sha1.txt >> $checksums
+        curl -s $dl_base/$beat/$artifact_32.sha1 >> $checksums
+        echo " $artifact_32" >> $checksums
+        curl -s $dl_base/$beat/$artifact_64.sha1 >> $checksums
+        echo " $artifact_64" >> $checksums
+        cat $checksums
 
         pushd /tmp/
 
