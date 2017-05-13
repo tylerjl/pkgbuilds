@@ -4,5 +4,6 @@
 .*.swp
 .vagrant
 *.tar.gz
+*.tar.xz
 *.gz
 *.proto
