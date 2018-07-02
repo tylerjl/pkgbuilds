@@ -6,4 +6,5 @@
 *.tar.gz
 *.tar.xz
 *.gz
+*.bz2
 *.proto
